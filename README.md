@@ -3,9 +3,7 @@
 Repository for Dr. Luo
 
 # Contributing
-Before adding t this repo it is recommended to set up a .gitignore file and adding the following
-
-*__pycache__*
+Before adding to this repo it is recommended to set up a .gitignore file and add the pycache folder 
  
 # Run baseline driving network
 Check that the config file for the assocated folder and configuration has the IMAGE_TRANSLATION config set to False
