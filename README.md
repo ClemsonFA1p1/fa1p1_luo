@@ -2,10 +2,12 @@
 
 Repository for Dr. Luo
 
+# Contributing
+Before adding t this repo it is recommended to set up a .gitignore file and adding the following
 
-# Adding quick commands for now. Will make nicer later on
-
-#Run baseline driving network
+*__pycache__*
+ 
+# Run baseline driving network
 Check that the config file for the assocated folder and configuration has the IMAGE_TRANSLATION config set to False
 
 python coiltraine.py --gpus 0  --folder nocrash --exp resnet34imnet10S1 --single-process drive -de NocrashTraining_Town01 --docker carlagear 
