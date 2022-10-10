@@ -101,9 +101,11 @@ def reshape_images(image_type, episode, data_point_number):
     center_name = 'Central' + image_type + '_' + data_point_number + '.png'
     left_name = 'Left' + image_type + '_' + data_point_number + '.png'
     right_name = 'Right' + image_type + '_' + data_point_number + '.png'
+    aerial_name = 'Aerial' + image_type + '_' + data_point_number + '.png'
     
     center = cv2.imread(os.path.join(episode, center_name), cv2.IMREAD_COLOR)
-    left = cv2.imread(os.path.join(episode, left_name), cv2.IMREAD_COLOR)
+    #left = cv2.imread(os.path.join(episode, left_name), cv2.IMREAD_COLOR)
+    aerial = cv2.imread(os.path.join(episode, aerial_name), cv2.IMREAD_COLOR)
 
     if center is None:
         print("remove", data_point_number)
@@ -117,17 +119,20 @@ def reshape_images(image_type, episode, data_point_number):
        
         cv2.imwrite(os.path.join(episode, center_name), center)
 
-    if left.shape[0] == 600:
-        left = left[IMAGE_CUT[0]:IMAGE_CUT[1], ...]
-        left = cv2.resize(left, (200, 88), interpolation=cv2.INTER_CUBIC)
-        cv2.imwrite(os.path.join(episode, left_name), left)
+    #if left.shape[0] == 600:
+    #    left = left[IMAGE_CUT[0]:IMAGE_CUT[1], ...]
+    #    left = cv2.resize(left, (200, 88), interpolation=cv2.INTER_CUBIC)
+    #    cv2.imwrite(os.path.join(episode, left_name), left)
     
     # if right.shape[0] == 600:
     #     right = right[IMAGE_CUT[0]:IMAGE_CUT[1], ...]
     #     right = scipy.misc.imresize(right, (88, 200), interp=interp_type)
     #     scipy.misc.imsave(os.path.join(episode, right_name), right)
 
-
+    if aerial.shape[0] == 600: 
+        aerial = cv2.resize(aerial, (200, 88), interpolation=cv2.INTER_CUBIC)
+       
+        cv2.imwrite(os.path.join(episode, aerial_name), aerial)
 
 
 
