@@ -71,7 +71,7 @@ class Recording(object):
         # store the save images flag, and already store the format for image saving
         self._save_images = save_images
         self._image_filename_format = os.path.join(
-            self._path, '_images/episode_{:s}/{:s}/image_{:0>5d}.jpg')
+            self._path, '_images/episode_{:s}/{:s}/image_{:0>5d}')
 
     @property
     def path(self):

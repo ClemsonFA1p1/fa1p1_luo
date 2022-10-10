@@ -10,6 +10,7 @@ import logging
 import math
 import time
 import numpy as np
+import os
 
 from ..client import VehicleControl
 from ..client import make_carla_client
@@ -408,6 +409,9 @@ class DrivingBenchmark(object):
 
         while not fail and not success:
             path = '_benchmarks_results/' + self._base_name + '/_images/episode_' + episode_name + '/translation/image_{:0>5d}'.format(frame)
+            if g_conf.IMAGE_TRANSLATION:
+              if not os.path.exists('_benchmarks_results/' + self._base_name + '/_images/episode_' + episode_name + '/translation'):
+                os.makedirs('_benchmarks_results/' + self._base_name + '/_images/episode_' + episode_name + '/translation')
             # Read data from server with the client
             measurements, sensor_data = client.read_data()
             # The directions to reach the goal are calculated.
@@ -489,7 +493,7 @@ def run_driving_benchmark(agent,
                           log_name='Test',
                           continue_experiment=False,
                           host='127.0.0.1',
-                          port=2000
+                          port=2000,
                           ):
     while True:
         try:
@@ -506,6 +510,13 @@ def run_driving_benchmark(agent,
                 prefix=''
                 if (g_conf.IMAGE_TRANSLATION):
                   prefix = 'translation'
+                if (g_conf.STYLE_TRANSLATION):
+                  prefix = 'left_style'
+                if (g_conf.AERIAL_TRANSLATION):
+                  prefix = 'aerial' 
+                
+                
+                  
 
                 benchmark = DrivingBenchmark(city_name=city_name,
                                              name_to_save=prefix + name + log_name + '_'

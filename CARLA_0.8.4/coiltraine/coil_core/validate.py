@@ -80,20 +80,25 @@ def execute(gpu, exp_batch, exp_alias, dataset_name, suppress_output):
 
         # The data loader is the multi threaded module from pytorch that release a number of
         # workers to get all the data.
+        
         data_loader = torch.utils.data.DataLoader(dataset, batch_size=g_conf.BATCH_SIZE,
                                                   shuffle=False,
                                                   num_workers=g_conf.NUMBER_OF_LOADING_WORKERS,
                                                   pin_memory=True)
 
         model = CoILModel(g_conf.MODEL_TYPE, g_conf.MODEL_CONFIGURATION)
+        
         # The window used to keep track of the trainings
         l1_window = []
+        
         latest = get_latest_evaluated_checkpoint()
+        latest = 660000
         if latest is not None:  # When latest is noe
             l1_window = coil_logger.recover_loss_window(dataset_name, None)
+        
 
         model.cuda()
-
+        
         best_mse = 1000
         best_error = 1000
         best_mse_iter = 0
@@ -104,10 +109,9 @@ def execute(gpu, exp_batch, exp_alias, dataset_name, suppress_output):
                   moco_model = Build_MoCo()
                   moco_model.cuda()
                   moco_model.eval()
-
+       
         while not maximun_checkpoint_reach(latest, g_conf.TEST_SCHEDULE):
             if is_next_checkpoint_ready(g_conf.TEST_SCHEDULE):
-                print(g_conf.TEST_SCHEDULE)
                 latest = get_next_checkpoint(g_conf.TEST_SCHEDULE)
                 checkpoints.append(latest)
                 checkpoint = torch.load(os.path.join('_logs', exp_batch, exp_alias
@@ -132,9 +136,8 @@ def execute(gpu, exp_batch, exp_alias, dataset_name, suppress_output):
                 accumulated_error = 0
                 iteration_on_checkpoint = 0
                 
-                
-
                 for data in data_loader:
+                    
                     # Compute the forward pass on a batch from  the validation dataset
                     controls = data['directions']
                     if g_conf.USE_MOCO:

@@ -22,10 +22,15 @@ from carla08.client import VehicleControl
 from network import CoILModel
 from configs import g_conf
 from logger import coil_logger
-from translation.test import ImageTranslation
+
+if g_conf.STYLE_TRANSLATION:
+  from pixel2style2pixel.test import ImageTranslation
+else:
+  from translation.test import ImageTranslation
 import moco_v3.moco.builder
 import moco_v3
 from network.models.building_blocks.build_moco import Build_MoCo
+from torchvision.utils import save_image
 
 try:
     sys.path.append(glob.glob('**/carla-*%d.%d-%s.egg' % (
@@ -65,6 +70,8 @@ class CoILAgent(object):
             
         if g_conf.IMAGE_TRANSLATION:
             self.translation=ImageTranslation()
+            
+        
 
     def run_step(self, measurements, sensor_data, directions, target, path):
         """
@@ -166,19 +173,26 @@ class CoILAgent(object):
        
             image_input = image_input.unsqueeze(0)
             
-            
-           
-            data = {}
-            data['path'] = path
-            data['label'] = (image_input-0.5)/0.5
-            data['inst'] = None
-            data['image'] = None
-            image_input = self.translation.generate_image(data)
-            image_input=(image_input*0.5)+0.5
-            if g_conf.USE_MOCO:
-              image_input = self.moco_model.moco.generate_representation((image_input))
-            
-            self.latest_image_tensor = image_input
+            if g_conf.STYLE_TRANSLATION: 
+                 image_input = (image_input-0.5)/0.5
+                 image_input = self.translation.generate_image(image_input)
+                 image_input=(image_input*0.5)+0.5
+                 save_image(image_input, path + '.png')
+
+            else:
+              data = {}
+              data['path'] = path
+              data['label'] = (image_input-0.5)/0.5
+              data['inst'] = None
+              data['image'] = None
+              image_input = self.translation.generate_image(data)
+              image_input=(image_input*0.5)+0.5
+              if g_conf.USE_MOCO:
+                image_input = self.moco_model.moco.generate_representation((image_input))
+              
+              
+              #save_image(im_data.squeeze(), path)
+              self.latest_image_tensor = image_input
        
         else:
           for name, size in g_conf.SENSORS.items():

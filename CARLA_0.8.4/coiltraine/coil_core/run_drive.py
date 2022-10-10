@@ -26,6 +26,8 @@ from coilutils.general import compute_average_std_separatetasks, get_latest_path
 from plotter.plot_on_map import plot_episodes_tracks
 
 
+
+
 def find_free_port():
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.bind(('', 0))
@@ -94,7 +96,6 @@ def driving_benchmark(checkpoint_number, gpu, town_name, experiment_set, exp_bat
                                              , 'checkpoints', str(checkpoint_number) + '.pth'))
 
         coil_agent = CoILAgent(checkpoint, town_name)
-        print ("Checkpoint ", checkpoint_number)
         coil_logger.add_message('Iterating', {"Checkpoint": checkpoint_number}, checkpoint_number)
 
         """ MAIN PART, RUN THE DRIVING BENCHMARK """
