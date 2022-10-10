@@ -51,7 +51,7 @@ _g_conf.EXPERIMENT_GENERATED_NAME = None
 
 
 _g_conf.IMAGE_TRANSLATION=True
-_g_conf.AERIAL_TRANSLATION=True
+_g_conf.AERIAL_TRANSLATION=False
 _g_conf.STYLE_TRANSLATION=True
 
 _g_conf.USE_MOCO=False
@@ -158,7 +158,7 @@ def set_type_of_process(process_type, param=None):
         _g_conf.CITY_NAME = param.split('_')[-1]
         _g_conf.PROCESS_NAME = process_type + '_' + param
 
-    #else:  # FOr the test case we join with the name of the experimental suite.
+    #else:  # For the test case we join with the name of the experimental suite.
 
     create_log(_g_conf.EXPERIMENT_BATCH_NAME,
                _g_conf.EXPERIMENT_NAME,
@@ -195,7 +195,6 @@ def _merge_a_into_b(a, b, stack=None):
     """Merge config dictionary a into config dictionary b, clobbering the
     options in b whenever they are also specified in a.
     """
-
     assert isinstance(a, AttributeDict) or isinstance(a, dict), 'Argument `a` must be an AttrDict'
     assert isinstance(b, AttributeDict) or isinstance(a, dict), 'Argument `b` must be an AttrDict'
 
@@ -208,7 +207,7 @@ def _merge_a_into_b(a, b, stack=None):
                 b[k] = v_
             else:
                 raise KeyError('Non-existent config key: {}'.format(full_key))
-
+        
         v = copy.deepcopy(v_)
         v = _decode_cfg_value(v)
 

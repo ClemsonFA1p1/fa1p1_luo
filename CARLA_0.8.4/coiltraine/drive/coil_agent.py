@@ -4,6 +4,7 @@ import sys
 import os
 import glob
 import torch
+from configs import g_conf
 
 from scipy.misc import imresize
 from PIL import Image
@@ -20,7 +21,7 @@ from carla08.agent import CommandFollower
 from carla08.client import VehicleControl
 
 from network import CoILModel
-from configs import g_conf
+
 from logger import coil_logger
 
 if g_conf.STYLE_TRANSLATION:
