@@ -49,8 +49,11 @@ _g_conf.EXPERIMENT_BATCH_NAME = "eccv"
 _g_conf.EXPERIMENT_NAME = "default"
 _g_conf.EXPERIMENT_GENERATED_NAME = None
 
-# TODO: not necessarily the configuration need to know about this
-_g_conf.IMAGE_TRANSLATION=False
+
+_g_conf.IMAGE_TRANSLATION=True
+_g_conf.AERIAL_TRANSLATION=True
+_g_conf.STYLE_TRANSLATION=True
+
 _g_conf.USE_MOCO=False
 _g_conf.PROCESS_NAME = "None"
 _g_conf.NUMBER_ITERATIONS = 20000
@@ -101,7 +104,7 @@ def merge_with_yaml(yaml_filename):
     global _g_conf
     with open(yaml_filename, 'r') as f:
 
-        yaml_file = yaml.load(f)
+        yaml_file = yaml.safe_load(f)
 
         yaml_cfg = AttributeDict(yaml_file)
 

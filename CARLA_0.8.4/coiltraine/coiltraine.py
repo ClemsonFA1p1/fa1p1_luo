@@ -3,10 +3,13 @@ import argparse
 from coil_core import execute_train, execute_validation, execute_drive, folder_execute
 from coilutils.general import create_log_folder, create_exp_path, erase_logs,\
                           erase_wrong_plotting_summaries, erase_validations
+import torch
+from configs import g_conf
 
 # You could send the module to be executed and they could have the same interface.
 
 if __name__ == '__main__':
+    torch.multiprocessing.set_start_method('spawn')
     argparser = argparse.ArgumentParser(description=__doc__)
 
     argparser.add_argument(
@@ -120,7 +123,15 @@ if __name__ == '__main__':
         default = 0,
         dest = 'which_epoch',
     )    
-    
+    argparser.add_argument(
+      '-cp','--checkpoint_path',
+       default = '',
+       dest='checkpoint_path',
+    )
+    argparser.add_argument(
+      '-tb', '---test_batch_size',
+        default = 1,
+    )
     args = argparser.parse_args()
 
     # Check if the vector of GPUs passed are valid.
@@ -149,14 +160,27 @@ if __name__ == '__main__':
         erase_validations(args.folder, list(args.validation_datasets))
 
     # The definition of parameters for driving
-    drive_params = {
-        "suppress_output": True,
-        "no_screen": args.no_screen,
-        "docker": args.docker,
-        "record_collisions": args.record_collisions,
-        "name" : args.name + "_" + str(args.which_epoch)
-      
+    
+    if g_conf.STYLE_TRANSLATION:
+      split = args.checkpoint_path.split('/')
+      iteration = split[len(split)-1]
+      iteration_folder = split[len(split)-3]
+      drive_params = {
+          "suppress_output": True,
+          "no_screen": args.no_screen,
+          "docker": args.docker,
+          "record_collisions": args.record_collisions,
+          "name" : iteration_folder + '_' + iteration  
     }
+    else:
+      drive_params = {
+          "suppress_output": True,
+          "no_screen": args.no_screen,
+          "docker": args.docker,
+          "record_collisions": args.record_collisions,
+          "name" : args.name + "_" + str(args.which_epoch)
+        
+      }
     # There are two modes of execution
     if args.single_process is not None:
         ####

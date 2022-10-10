@@ -26,8 +26,11 @@ USE_NOISE_DATA: True  # If we use the noise data.
 NUMBER_OF_HOURS: 50  # Number of hours to be taken from the input data
 
 #### Testing Related Parameters ####
-TEST_SCHEDULE: [660000]  # The frequency the model is actually tested.
+TEST_SCHEDULE: [660000, 10000000]  # The frequency the model is actually tested.
+#TEST_SCHEDULE: [0, 100000, 150000]
 IMAGE_TRANSLATION: True
+AERIAL_TRANSLATION: True
+STYLE_TRANSLATION: True
 USE_MOCO: False
 #### Model Related Parameters ####
 # Network Parameters #
