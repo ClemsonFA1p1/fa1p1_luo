@@ -16,13 +16,21 @@ skvideo.setFFmpegPath('/home/bsande6/anaconda3/envs/coiltraine/bin/')
 #skvideo.setFFmpegPath('/home/bsande6/anaconda3/envs/coiltraine/lib/python3.5/site-packages/skvideo/io/')
 import skvideo.io
 
-DATA_DIR = '/home/bsande6/coiltraine/_benchmarks_results/nocrash_resnet34imnet10S2_480000_drive_control_output_NocrashNewWeatherTown_Town02'
+DATA_DIR = '_benchmarks_results/left_style_iteration_100000_carla_LtoG_iteration_500000.ptnocrash_resnet34imnet10S1_660000_drive_control_output_NocrashTraining_Town01/_images'
+
 
 if __name__ == '__main__':
-	data_type = sys.argv[1]
-	episode_number = sys.argv[2]
-	episode_path = os.path.join(DATA_DIR, data_type, 'episode_%s'%(episode_number))
-	episode_data = sorted(os.listdir(episode_path))
+	#data_type = sys.argv[1]
+	episode_number = sys.argv[1]
+	episode_path = os.path.join(DATA_DIR,'episode_%s'%(episode_number))
+	print(os.path.exists(episode_path))
+	rgb_path = os.path.join(episode_path, "rgb")
+	print(os.path.exists(rgb_path))
+	translated_path = os.path.join(episode_path, "translation")
+	print(os.path.exists(translated_path))
+	#episode_data = sorted(os.listdir(episode_path))
+	translated_data = sorted(os.listdir(translated_path))
+	rgb_data = sorted(os.listdir(episode_path))
 
 	measurements_data = []
 	expert_steer = []
@@ -33,44 +41,24 @@ if __name__ == '__main__':
 	agent_brake = []
 	directions = []
 	speed_module = []
-	left_image_path = []
-	center_image_path=[]
+	rgb_image_path = []
+	translated_image_path=[]
+	
 
-	for file_name in episode_data:
-		if 'left_rgb' in file_name:
-		# print (file_name)
-			left_cam_data = sorted(os.listdir(os.path.join(episode_path, file_name)))
-			for image in left_cam_data:
-				# print(frame)
-				# frame_number = frame
-				# with open(os.path.join(episode_path, file_name)) as file:
-				# 	json_data = json.load(file)
-				# file.close()
-				#left_image_data.append()
-				# measurements_data.append(json_data)
-
-				# expert_steer.append(float(json_data['steer']))
-				# expert_throttle.append(float(json_data['throttle']))
-				# expert_brake.append(float(json_data['brake']))
-
-				# agent_steer.append(float(json_data['steer_noise']))
-				# agent_throttle.append(float(json_data['throttle_noise']))
-				# agent_brake.append(float(json_data['brake_noise']))
-
-				# directions.append(json_data['directions'])
-				# if 'playerMeasurements' in json_data and 'forwardSpeed' in json_data['playerMeasurements']:
-				# 	speed_module.append(float(json_data['playerMeasurements']['forwardSpeed']))
-				# else:
-				# 	speed_module.append(0)
-
+	for file_name in rgb_data:
+		if 'rgb' in file_name:
+			rgb_cam_data = sorted(os.listdir(os.path.join(episode_path, file_name)))
+			for image in rgb_cam_data:
 				image_path = os.path.join(episode_path, file_name, image)
-				#print(image_path)
-				left_image_path.append(image_path)
+				print(image_path)
+				rgb_image_path.append(image_path)
 		else:
-			center_cam_data = sorted(os.listdir(os.path.join(episode_path, file_name)))
-			for image in center_cam_data:
+			print(file_name)
+			translated_data = sorted(os.listdir(os.path.join(episode_path, file_name)))
+			for image in translated_data:
 				image_path = os.path.join(episode_path, file_name, image)
-				center_image_path.append(image_path)
+				print(image_path)
+				translated_image_path.append(image_path)
 
 
 	# print (len(measurements_data), len(central_image_path), len(expert_steer), len(expert_throttle), len(expert_brake),
@@ -88,22 +76,22 @@ if __name__ == '__main__':
 	# print("Number of rows: %d" % (M,))
 	# print("Number of cols: %d" % (N,))
 	
-	writer = skvideo.io.FFmpegWriter(os.path.join(DATA_DIR, 'videos', '%s_episode_%s.mp4'%(data_type, episode_number)), inputdict={'-r': '10', '-s':'800x600'},
+	writer = skvideo.io.FFmpegWriter(os.path.join(DATA_DIR, 'videos', '%s_episode_%s.mp4'%("_images", episode_number)), inputdict={'-r': '10', '-s':'800x600'},
             outputdict={'-r': '10',  '-pix_fmt': 'yuv420p'})
-	for i in range(1, len(left_image_path)):
-		img = Image.open(left_image_path[i])
-		center_img = Image.open(center_image_path[i])
+	for i in range(1, len(rgb_image_path)):
+		img = Image.open(rgb_image_path[i])
+		translated_img = Image.open(translated_image_path[i])
 		#center_img = np.asarray(center_img)
 		#center_img = np.resize(center_img, (100, 120))
-		center_img = center_img.resize((200, 120), resample=0)
-		img.paste(center_img, (30,40, 230, 160))
+		translated_img = translated_img.resize((200, 120), resample=0)
+		img.paste(translated_img, (30,40, 230, 160))
 
 		helvetica = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSerif.ttf", size=20)
 		d = ImageDraw.Draw(img)
 		text_color = (255, 255, 255)
 
 		location = (40, 10)
-		d.text(location, "Center Camera", font=helvetica, fill=text_color)
+		d.text(location, "Synthesized Center Camera", font=helvetica, fill=text_color)
 
 		# location = (40, 35)
 		# d.text(location, "agent_throttle = %0.4f"%agent_throttle[i], font=helvetica, fill=text_color)
@@ -112,7 +100,7 @@ if __name__ == '__main__':
 		# d.text(location, "agent_brake = %0.4f"%agent_brake[i], font=helvetica, fill=text_color)
 
 		location = (300, 10)
-		d.text(location, "Left Camera",  font=helvetica, fill=text_color)
+		d.text(location, "Aerial Camera",  font=helvetica, fill=text_color)
 
 		# location = (300, 35)
 		# d.text(location, "expert_throttle = %0.4f"%expert_throttle[i], font=helvetica, fill=text_color)
