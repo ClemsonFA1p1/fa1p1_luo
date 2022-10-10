@@ -55,7 +55,7 @@ def get_latest_saved_checkpoint():
 
     """
     checkpoint_files = os.listdir(os.path.join('_logs', g_conf.EXPERIMENT_BATCH_NAME,
-                                               g_conf.EXPERIMENT_NAME, 'checkpoints'))
+                                               g_conf.EXPERIMENT_NAME, 'checkpoints'))                                      
     if checkpoint_files == []:
         return None
     else:
@@ -79,7 +79,7 @@ def is_next_checkpoint_ready(checkpoint_schedule, control_filename=None):
 
     # IT needs
     ltst_check = get_latest_evaluated_checkpoint(control_filename)
-    print(ltst_check)
+
     # This means that we got the last one, so we return false and go back to the loop
     if ltst_check == g_conf.TEST_SCHEDULE[-1]:
         return False

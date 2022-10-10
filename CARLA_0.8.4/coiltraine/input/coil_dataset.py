@@ -24,11 +24,11 @@ from coilutils.general import sort_nicely
 
 
 
+
 def parse_remove_configuration(configuration):
     """
     Turns the configuration line of sliptting into a name and a set of params.
     """
-
     if configuration is None:
         return "None", None
     print('conf', configuration)
@@ -57,6 +57,7 @@ class CoILDataset(Dataset):
         # Setting the root directory for this dataset
         self.root_dir = root_dir
         # We add to the preload name all the remove labels
+     
         if g_conf.REMOVE is not None and g_conf.REMOVE is not "None":
             name, self._remove_params = parse_remove_configuration(g_conf.REMOVE)
             self.preload_name = preload_name + '_' + name
@@ -72,12 +73,9 @@ class CoILDataset(Dataset):
                 os.path.join('_preloads', self.preload_name + '.npy')):
             print(" Loading from NPY ")
             self.sensor_data_names, self.measurements = np.load(
-                os.path.join('_preloads', self.preload_name + '.npy'))
+                os.path.join('_preloads', self.preload_name + '.npy'), allow_pickle=True)
         else:
             self.sensor_data_names, self.measurements = self._pre_load_image_folders(root_dir)
-
-        print(self.sensor_data_names)
-        print("preload Name ", self.preload_name)
 
         self.transform = transform
         self.batch_read_number = 0
@@ -100,7 +98,6 @@ class CoILDataset(Dataset):
             img_path = os.path.join(self.root_dir,
                                     self.sensor_data_names[index].split('/')[-2],
                                     self.sensor_data_names[index].split('/')[-1])
-            
             img = cv2.imread(img_path, cv2.IMREAD_COLOR)
             
             if img is None:
@@ -124,6 +121,7 @@ class CoILDataset(Dataset):
                 v = torch.from_numpy(np.asarray([v, ]))
                 measurements[k] = v.float()
             measurements['rgb'] = img
+            measurements['path'] = img_path
 
             self.batch_read_number += 1
         except AttributeError:
@@ -137,6 +135,7 @@ class CoILDataset(Dataset):
             measurements['throttle'] = torch.FloatTensor([0.0])
             measurements['brake'] = torch.FloatTensor([0.0])
             measurements['rgb'] = torch.from_numpy(np.zeros((3, 88, 200))).float()
+            
             #measurements['steer'] = 0.0
             #measurements['throttle'] = 0.0
             #measurements['brake'] = 0.0
@@ -215,7 +214,7 @@ class CoILDataset(Dataset):
 
         # Now we do a check to try to find all the
         for episode in episodes_list:
-            if os.path.exists(os.path.join(episode, "processed2")):
+            if os.path.exists(os.path.join(episode, "processed2")) or os.path.exists(os.path.join(episode, "synthesized_00000.png")):
                 available_measurements_dict = data_parser.check_available_measurements(episode)
 
                 if number_of_hours_pre_loaded > g_conf.NUMBER_OF_HOURS:
@@ -253,14 +252,17 @@ class CoILDataset(Dataset):
                     else:
                         directions = directions + 2
                     
+                    # Comment out code based on which cameras are being used to train as well as the image naming convention
+                    
                     final_measurement = self._get_final_measurement(speed, measurement_data, 0,
                                                                     directions,
                                                                     available_measurements_dict)
 
                     if self.is_measurement_partof_experiment(final_measurement):
                         float_dicts.append(final_measurement)
-                        rgb = 'CentralRGB_' + data_point_number + '.png'
-                        #rgb = 'image_' + data_point_number + '_synthesized_image.jpg'
+                        #rgb = 'CentralRGB_' + data_point_number + '.png'
+                        rgb = 'synthesized_' + data_point_number + '.png'
+                        #rgb = 'LeftRGB_' + data_point_number + '.png'
                         sensor_data_names.append(os.path.join(episode.split('/')[-1], rgb))
                         count_added_measurements += 1
 
@@ -290,6 +292,16 @@ class CoILDataset(Dataset):
                     #     rgb = 'RightRGB_' + data_point_number + '.png'
                     #     sensor_data_names.append(os.path.join(episode.split('/')[-1], rgb))
                     #     count_added_measurements += 1
+                      
+                    #final_measurement = self._get_final_measurement(speed, measurement_data, 30.0,
+                    #                                                 directions,
+                    #                                                 available_measurements_dict)
+
+                    #if self.is_measurement_partof_experiment(final_measurement):
+                         #float_dicts.append(final_measurement)
+                         #rgb = 'AerialRGB_' + data_point_number + '.png'
+                         #sensor_data_names.append(os.path.join(episode.split('/')[-1], rgb))
+                         #count_added_measurements += 1
 
                 # Check how many hours were actually added
 
