@@ -19,6 +19,8 @@ class Logger(object):
         #now = datetime.now()
         #log_dir = log_dir + now.strftime("%Y%m%d-%H%M%S")
         self.writer = tf.summary.create_file_writer(log_dir)
+        # Use for old environment 
+        #self.writer = tf.summary.FileWriter(log_dir)
 
     def scalar_summary(self, tag, value, step):
         """Log a scalar variable."""

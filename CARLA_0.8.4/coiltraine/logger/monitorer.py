@@ -71,12 +71,14 @@ def get_error_summary(data):
         return ''
 
 def get_latest_checkpoint_validation():
+    
     csv_file_path = os.path.join('_logs', g_conf.EXPERIMENT_BATCH_NAME,
                                  g_conf.EXPERIMENT_NAME, g_conf.PROCESS_NAME + '_csv')
 
     csv_files = os.listdir(csv_file_path)
 
     if len(csv_files) == 0:
+        
         return None
 
     sort_nicely(csv_files)
@@ -88,9 +90,11 @@ def get_latest_checkpoint_validation():
     not_evaluated_logs = sorted(not_evaluated_logs, reverse=False)
 
     if len(not_evaluated_logs) == 0:  # Just in case that is the last one
+        
         return g_conf.TEST_SCHEDULE[-1]
 
     if g_conf.TEST_SCHEDULE.index(not_evaluated_logs[0]) == 0:
+     
         return None
 
 
