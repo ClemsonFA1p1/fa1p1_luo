@@ -62,6 +62,7 @@ class NocrashTraining(ExperimentSuite):
 
         # We set the camera
         # This single RGB camera is used on every experiment
+        
 
         if not g_conf.IMAGE_TRANSLATION:
           camera = Camera('rgb')
@@ -69,6 +70,12 @@ class NocrashTraining(ExperimentSuite):
           camera.set_image_size(800, 600)
           camera.set_position(2.0, 0.0, 1.4)
           camera.set_rotation(-15.0, 0, 0)
+        elif g_conf.AERIAL_TRANSLATION:
+          camera = Camera('rgb')
+          camera.set(FOV=100)
+          camera.set_image_size(800, 600)
+          camera.set_position(-12.0, 0.0, 15.0)
+          camera.set_rotation(-45.0, 0.0, 0.0)
         else:
           camera = Camera('rgb')
           camera.set(FOV=100)
